@@ -1,1 +1,102 @@
+namespace ConsoleApp2;
 
+public class Course
+{
+    public int Id { get; private set; }
+    public string Name { get; set; }
+    public string Teacher { get; private set; }
+        
+    public Course(int id, string name, string teacher)
+    {
+        Id = id;
+        Name = name;
+        Teacher = teacher;
+    }
+    
+    public List<Course> EnrolledCourses = new();
+
+    public void EnrollCourse(Course course)
+        => EnrolledCourses.Add(course);
+
+    public string GetInfo()
+        => $"{Id} ({Name}, {Teacher})";
+}
+
+
+public class Student
+{
+    public int Id { get; private set; }
+    public string Name { get; private set; }
+    private List<Course> enrollCourses = new ();
+
+
+    public Student(int id, string name)
+    {
+        Id = id;
+        Name = name;
+    }
+
+    public string GetInfo()
+        => $"{Id}, {Name}, курсів: {enrollCourses.Count}";
+    
+    public void EnrollCourse(Course course)
+    {
+        if (!enrollCourses.Any(c => c.Id == course.Id))
+            enrollCourses.Add(course);
+    }
+    
+
+}
+
+public class University
+{
+    private Dictionary<int, Student> Students = new();
+
+    private List<Course> allCourses = new();
+    
+    private Stack<string> history = new();
+    
+    private Queue<Course> registrationQueue = new();
+    
+    public void AddCourse(Course course)
+    => allCourses.Add(course);
+    
+    public void RegisterStudent(Student student)
+    => Students.Add(student.Id, student);
+    
+    
+    public void addToQueue(Course course)
+    => registrationQueue.Enqueue(course);
+    
+    public void showAllCourses()
+    {
+        Console.WriteLine("Courses:");
+        foreach (var course in allCourses)
+            Console.WriteLine(course.GetInfo());
+    }
+
+    public void showAllStudents()
+    {
+        Console.WriteLine("Students:");
+        foreach (var student in Students)
+            Console.WriteLine(student.Value.GetInfo());
+    }
+
+    public void showHistory()
+    {
+        Console.WriteLine("History:");
+        while (history.Count > 0)
+            Console.WriteLine(history.Pop());
+    }
+    
+    public void EnrollStudentToCourse(int studentId, Course course)
+    {
+        if (Students.ContainsKey(studentId))
+        {
+            Students[studentId].EnrollCourse(course);
+
+            history.Push($"Student {Students[studentId].Name} enrolled to {course.Name}");
+        }
+    }
+
+}
